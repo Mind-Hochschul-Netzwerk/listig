@@ -1,0 +1,11 @@
+lists:
+  rewrite-sender-name: "{sender-name} (via MHN)"
+ldap:
+  host: ldap
+  bind-dn: cn=admin,dc=mind-hochschul-netzwerk,dc=de
+  bind-password: $LDAP_BIND_PASSWORD
+  dn: ou=groups,dc=mind-hochschul-netzwerk,dc=de
+  filter: (objectClass=mailGroup)
+  userFilter: "(&(objectClass=inetOrgPerson)(employeeType=0))"
+redis:
+  host: redis
