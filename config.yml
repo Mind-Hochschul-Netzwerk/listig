@@ -1,4 +1,5 @@
 lists:
+  type: list-collection
   rewrite-sender-name: "{sender-name} (via MHN)"
 ldap:
   host: ldap
