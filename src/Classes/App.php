@@ -149,7 +149,7 @@ class App {
 
             $listPassword = $redis->get(strtolower($listAddress));
             if (!$listPassword) {
-                echo "missing password for {$listAddress}\n";
+                error_log("missing password for {$listAddress}");
                 continue;
             }
 
@@ -298,7 +298,7 @@ class App {
         try {
             $mailsIds = $inbox->searchMailbox('ALL');
         } catch(\PhpImap\Exceptions\ConnectionException $ex) {
-            echo "IMAP connection for {$list['list-address']} failed: " . $ex->getMessage() . "\n";
+            error_log("IMAP connection for {$list['list-address']} failed: " . $ex->getMessage());
             return;
         }
 
@@ -306,31 +306,20 @@ class App {
             return;
         }
 
-        $outbox = new PHPMailer();
-        $outbox->isSMTP();
-        $outbox->Host = $mailServerConfig['smtp-host'];
-        $outbox->Port = $mailServerConfig['smtp-port'];
-        $outbox->SMTPAuth = true;
-        $outbox->SMTPSecure = $mailServerConfig['smtp-secure'];
-        $outbox->SMTPKeepAlive = true;
-        $outbox->CharSet = "UTF-8";
-        $outbox->AllowEmpty = true;
-
-        $outbox->Username = $mailServerConfig['smtp-user'];
-        $outbox->Password = $mailServerConfig['smtp-password'];
-
         foreach ($mailsIds as $mailId) {
             $mail = $inbox->getMail($mailId);
 
+            $outbox = $this->createNewMail($mailServerConfig);
+
             $mailConfig = [
                 'subject' => $mail->subject,
-                'sender-name' => $mail->senderName,
+                'sender-name' => $mail->senderName ?: preg_replace('/^(.+?)[@+].*$/', '$1', $mail->senderAddress),
             ];
 
             $subjectPrefix = $this->replaceConfigVariables($list['subject-prefix'], $mailConfig, $list);
             $subject = $mail->subject;
             if (!str_contains(strtolower($subject), strtolower(($subjectPrefix)))) {
-                $subject = "$subjectPrefix $subject";
+                $subject = "$subjectPrefix$subject";
             }
 
             $senderName = $this->replaceConfigVariables($list['rewrite-sender-name'], $mailConfig, $list);
@@ -353,6 +342,7 @@ class App {
             $recipientAddresses = $reportToOwners ? $list['owners'] : $list['members'];
 
             $isSent = false;
+            $isSpam = false;
             foreach ($recipientAddresses as $recipientAddress) {
                 $outbox->clearAddresses();
                 $outbox->addAddress($recipientAddress, $recipientAddress);
@@ -365,16 +355,40 @@ class App {
 
                 if ($outbox->send()) {
                     $isSent = true;
+                } elseif (str_contains($outbox->ErrorInfo, 'Spam message rejected')) {
+                    error_log("Spam message was rejected by the server, skipping.");
+                    $isSpam = true;
+                    break;
                 } else {
-                    echo $outbox->ErrorInfo . "\n";
+                    error_log('message could not be sent: ' . $outbox->ErrorInfo);
                 }
             }
 
-            // message could be sent at least to one recipient
-            if ($isSent) {
+            // message could be sent at least to one recipient or was identified as spam
+            if ($isSent || $isSpam) {
                 $inbox->deleteMail($mailId);
             }
+
+            $outbox->smtpClose();
         }
+    }
+
+    private function createNewMail(array $mailServerConfig): PHPMailer
+    {
+        $outbox = new Outbox();
+        $outbox->isSMTP();
+        $outbox->Host = $mailServerConfig['smtp-host'];
+        $outbox->Port = $mailServerConfig['smtp-port'];
+        $outbox->SMTPAuth = true;
+        $outbox->SMTPSecure = $mailServerConfig['smtp-secure'];
+        $outbox->SMTPKeepAlive = true;
+        $outbox->CharSet = "UTF-8";
+        $outbox->AllowEmpty = true;
+
+        $outbox->Username = $mailServerConfig['smtp-user'];
+        $outbox->Password = $mailServerConfig['smtp-password'];
+
+        return $outbox;
     }
 
     private function getCustomHeaders(\PhpImap\IncomingMail $mail, \PhpImap\Mailbox $inbox, array $list): array
@@ -385,10 +399,6 @@ class App {
 
         $headers = $this->parseHeaders($mail->headersRaw, $inbox);
         foreach ($headers as [$headerName, $headerValue]) {
-            if ($headerName === 'To') {
-                $headerName = 'X-Original-To';
-            }
-
             // ignore headers that are handled elsewhere or shall not be copied
             if (in_array($headerName, [
                 'Subject',
@@ -420,6 +430,7 @@ class App {
             }
 
             if (!in_array($headerName, [
+                'To',
                 'Cc',
                 'X-No-Archive',
                 'Mailing-List',
@@ -452,7 +463,7 @@ class App {
             ], true)
             && !str_starts_with($headerName, 'List-')
             ) {
-                echo "copy unknown header: $headerName: $headerValue\n";
+                error_log("copy unknown header: $headerName: $headerValue");
             }
 
             $customHeaders[] = [$headerName, $headerValue];
