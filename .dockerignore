@@ -1,8 +1,0 @@
-docker/
-.git/
-.env
-docker-compose*.yml
-LICENSE
-README.md
-app/vendor
-app/config.yml
