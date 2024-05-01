@@ -1,6 +1,6 @@
 services:
   app:
-    image: ${ORGNAME}/${SERVICENAME}
+    image: ghcr.io/hengeb/listig:latest
     restart: unless-stopped
     container_name: ${SERVICENAME}
     volumes:
