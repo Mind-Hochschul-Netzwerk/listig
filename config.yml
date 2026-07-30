@@ -21,7 +21,7 @@ mail-config:
   imap-port: 993
   smtp-port: 465
   mail-user: "{list-mail|default:$MAIL_USER}"
-  mail-password: "$MAIL_PASSWORD"
+  mail-password: "{mail-user|match:$MAIL_USER=>$MAIL_PASSWORD}"
 
 ldap-config:
   ldap-host: ldap://ldap:389/
