@@ -1,28 +1,19 @@
-include .env
+.DEFAULT_GOAL := help
 
-.env:
-	$(error file .env is missing, see env.sample)
+.PHONY: help deploy logs down shell
 
-config.yml:
-	$(error file config.yml is missing, see config.yml.sample)
+help:
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
+		awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-14s\033[0m %s\n", $$1, $$2}'
 
-dev: .env config.yml
-	@echo "Starting DEV Server"
-	docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --force-recreate --remove-orphans
-
-prod: .env config.yml
-	@echo "Starting Production Server"
+prod: ## Recreate and start the app container
 	docker compose up -d --force-recreate --remove-orphans app
 
-upgrade:
-	git pull
-	make prod
-
-shell:
-	docker compose exec app sh
-
-rootshell:
-	docker compose exec --user root app sh
-
-logs:
+logs: ## Tail logs from all containers
 	docker compose logs -f
+
+down: ## Stop and remove containers
+	docker compose down
+
+shell: ## Open a shell inside the app container
+	docker compose exec app sh

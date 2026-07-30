@@ -1,0 +1,52 @@
+services:
+  app:
+    image: ghcr.io/hengeb/listig:latest
+    restart: unless-stopped
+    container_name: ${SERVICENAME}
+    env_file:
+      - .env
+    volumes:
+      - ./config.yml:/app/config/config.yml:ro
+      - ./filters.yml:/app/config/filters.yml:ro
+      - ./custom.latte:/app/config/custom.latte:ro
+      - ./css:/app/public/css/:ro
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=traefik
+      - traefik.http.routers.${SERVICENAME}.entrypoints=websecure
+      - traefik.http.routers.${SERVICENAME}.rule=Host(`lists.${DOMAINNAME}`)
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - traefik
+      - ldap
+      - default
+
+  db:
+    image: mariadb:11
+    restart: unless-stopped
+    container_name: ${SERVICENAME}-db
+    environment:
+      MARIADB_DATABASE: db
+      MARIADB_USER: user
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    volumes:
+      - ${VOLUMES_DIR}/mariadb:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - default
+
+networks:
+  traefik:
+    external: true
+  ldap:
+    external: true
+  default:
+    driver: bridge

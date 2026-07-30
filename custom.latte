@@ -1,0 +1,103 @@
+{define #custom_head}
+<link rel="icon" href="https://mitglieder.{getenv("DOMAINNAME")}/img/favicon.png">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="https://mitglieder.{getenv("DOMAINNAME")}/css/tabler-icons.min.css"/>
+<style>
+nav a {
+    font-size: 1rem;
+    margin-left: 0px;
+}
+#archive-table :is(button, .button, input[type="submit"], input[type="button"]):hover {
+    background: inherit;
+}
+.panel main, .panel .container {
+    margin: 0;
+    padding: 0;
+}
+</style>
+{/define}
+
+{define #custom_header}
+<a class="skip-link" href="#main-content">Zum Hauptinhalt springen</a>
+<input id="nav-toggle" type="checkbox" aria-hidden="true">
+
+<div class="topbar">
+  <label class="brand" for="nav-toggle">
+    <img src="https://mitglieder.{getenv("DOMAINNAME")}/img/mhn-logo-small.png" alt="MHN-Logo">
+    <div class="brand-text">
+      <span class="name">Mind-Hochschul-Netzwerk</span>
+      <span class="caption">Mailinglisten</span>
+    </div>
+  </label>
+
+  <label class="nav-toggle" for="nav-toggle" aria-controls="site-navigation" aria-label="Navigation öffnen">
+    <span class="hamburger" aria-hidden="true"></span>
+  </label>
+</div>
+
+<div class="sidebar" id="site-navigation" aria-label="Seitennavigation">
+    <nav>
+        <p class="sidebar-section-label">Mailinglisten</p>
+    <a href="/" class="active">
+        <i class="ti ti-mail nav-icon" aria-hidden="true"></i> Meine Listen
+    </a>
+
+    <a href="https://mitglieder.{getenv('DOMAINNAME')}/groups">
+        <i class="ti ti-users-group nav-icon" aria-hidden="true"></i> Gruppen
+    </a>
+
+        <p class="sidebar-section-label">MHN-Tools</p>
+    <a href="https://mitglieder.{getenv('DOMAINNAME')}">
+        <i class="ti ti-message-circle nav-icon" aria-hidden="true"></i> Mitgliederverzeichnis
+    </a>
+    <a href="https://wiki.{getenv('DOMAINNAME')}">
+        <i class="ti ti-book nav-icon" aria-hidden="true"></i> Wiki
+    </a>
+    <a href="https://www.{getenv('DOMAINNAME')}/veranstaltungen">
+        <i class="ti ti-calendar-event nav-icon" aria-hidden="true"></i> Veranstaltungen
+    </a>
+    <a href="https://mind-akademie.de/">
+        <i class="ti ti-school nav-icon" aria-hidden="true"></i> Mind-Akademie
+    </a>
+
+        <p class="sidebar-section-label">MHN</p>
+    <a href="https://www.{getenv('DOMAINNAME')}">
+        <i class="ti ti-home nav-icon" aria-hidden="true"></i> MHN-Webseite
+    </a>
+    <a href="https://www.mind-hochschul-netzwerk.de/mod/book/view.php?id=253&amp;chapterid=4">
+        <i class="ti ti-file-text-shield nav-icon" aria-hidden="true"></i> Datenschutz
+    </a>
+    <a href="https://www.mind-hochschul-netzwerk.de/mod/book/view.php?id=253&amp;chapterid=5">
+        <i class="ti ti-file nav-icon" aria-hidden="true"></i> Impressum
+    </a>
+
+        <div class="sidebar-bottom">
+            <p class="sidebar-section-label">Konto</p>
+    <a href="#" onclick="listigLogout(event)">
+        <i class="ti ti-logout nav-icon" aria-hidden="true"></i> Logout
+    </a>
+        </div>
+    </nav>
+</div>
+<label class="overlay" for="nav-toggle" tabindex="-1"></label>
+
+<main class="main-content">
+<section class="page-header" aria-labelledby="title">
+        <div class="summary">
+            <span class="page-label"><i class="ti ti-mail" aria-hidden="true"></i> Mailinglisten</span>
+            <h1 id="title">Mailinglisten</h1>
+<div class="summary">
+Hier findest du alle Mailinglisten, die du abonniert hast. Die
+Verwaltung der Mailinglisten findest du unter dem Menüpunkt <a href="https://mitglieder.{getenv('DOMAINNAME')}/groups">Gruppen</a>.
+</div>
+        </div>
+    </section>
+
+<section class="panel">
+
+{/define}
+
+{define #custom_body_end}
+</section>
+</main>
+{/define}

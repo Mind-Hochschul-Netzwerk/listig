@@ -1,12 +1,56 @@
-lists:
-  type: list-collection
-  rewrite-sender-name: "{sender-name} (via MHN)"
-ldap:
-  host: ldap
-  bind-dn: cn=admin,dc=mind-hochschul-netzwerk,dc=de
-  bind-password: $LDAP_BIND_PASSWORD
-  dn: ou=groups,dc=mind-hochschul-netzwerk,dc=de
-  filter: (objectClass=mailGroup)
-  userFilter: "(&(objectClass=inetOrgPerson)(employeeType=0))"
-redis:
-  host: redis
+language: de
+domain: "$DOMAINNAME"
+hostname: "lists.{domain}"
+
+sleep-seconds: 20
+log-level: "$LOG_LEVEL"
+
+use:
+  - database
+  - mail-config
+  - list-defaults
+  - openid-connect
+
+database:
+  db-name: db
+  db-user: user
+  db-password: "$DB_PASSWORD"
+
+mail-config:
+  mail-host: "$MAIL_HOST"
+  imap-port: 993
+  smtp-port: 465
+  mail-user: "{list-mail|default:$MAIL_USER}"
+  mail-password: "$MAIL_PASSWORD"
+
+ldap-config:
+  ldap-host: ldap://ldap:389/
+  ldap-base-dn: dc=mind-hochschul-netzwerk,dc=de
+  ldap-bind-dn: cn=admin,dc=mind-hochschul-netzwerk,dc=de
+  ldap-bind-password: "$LDAP_BIND_PASSWORD"
+  ldap-list-dn: ou=groups,dc=mind-hochschul-netzwerk,dc=de
+  firstname: "{givenName}"
+  lastname: "{sn}"
+
+list-defaults:
+  list-mail: "{list-name}@{domain}"
+  list-label: "[{display-name}]"
+  reply-to: list
+  allow-leave: direct
+  footer: "-- \n<p>Diese Mail wurde über die MHN-Liste {display-name} verschickt.</p><p>Falls du keine Mails über diese Liste mehr bekommen möchtest, kannst du sie hier abbestellen: <a href=\"{list-url}\">Zur Liste</a></p>"
+  archive: members
+  smtp-from-name: "{sender-name} (via MHN)"
+
+openid-connect:
+  oidc-provider-url: http://authelia:9091
+  oidc-public-provider-url: "https://sso.{domain}"
+  oidc-client-id: listig
+  oidc-client-secret: "$OIDC_CLIENT_SECRET"
+  logout-redirect-url: "https://mitglieder.{domain}/logout?idpDone=1"
+  oidc-logout-url: "{oidc-public-provider-url}/logout?rd={logout-redirect-url|urlencode}"
+
+filters: !include filters.yml
+
+list-providers:
+  ldap:
+    use: ldap-config
