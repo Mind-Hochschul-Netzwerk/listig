@@ -115,7 +115,6 @@ input[type="button"] {
   gap: 0.5rem;
   padding: 0.65rem 1.25rem;
   background: var(--accent);
-  color: #fff;
   border: none;
   border-radius: var(--radius-btn);
   cursor: pointer;

@@ -1,3 +1,17 @@
+{var $pages = [
+    dashboard: '/dashboard.latte',
+    archive: '/archive/index.latte',
+    archive.show: '/archive/show.latte',
+    manage: '/list/manage.latte',
+]}
+{var $this->pageName = $this->getReferringTemplate()->getReferringTemplate()->getName()}
+{foreach $pages as $name => $matcher}
+    {if str_ends_with($this->getReferringTemplate()->getReferringTemplate()->getName(), $matcher)}
+        {var $this->pageName = $name}
+        {breakIf true}
+    {/if}
+{/foreach}
+
 {define #custom_head}
 <link rel="icon" href="https://mitglieder.{getenv("DOMAINNAME")}/favicon.png">
 <link rel="stylesheet" href="/css/style.css">
@@ -14,7 +28,20 @@ nav a {
     margin: 0;
     padding: 0;
 }
+body {
+    background: #f5f8fd;
+}
+.container h1 { display: none; }
 </style>
+
+
+
+{/define}
+
+{define nav-link, $label, $href, $icon, $attributes}
+    <a href="{$href}" n:attr="$attributes">
+        <i class="ti ti-{$icon} nav-icon" aria-hidden="true"></i> {$label}
+    </a>
 {/define}
 
 {define #custom_header}
@@ -38,64 +65,69 @@ nav a {
 <div class="sidebar" id="site-navigation" aria-label="Seitennavigation">
     <nav>
         <p class="sidebar-section-label">Mailinglisten</p>
-    <a href="/" class="active">
-        <i class="ti ti-mail nav-icon" aria-hidden="true"></i> Meine Listen
-    </a>
-
-    <a href="https://mitglieder.{getenv('DOMAINNAME')}/groups">
-        <i class="ti ti-users-group nav-icon" aria-hidden="true"></i> Gruppen
-    </a>
+        {include nav-link, 'Meine Listen', '/', 'mail', ['class' => 'active']}
+        {include nav-link, 'Gruppen', 'https://mitglieder.' . getenv('DOMAINNAME') . '/groups', 'users-group'}
 
         <p class="sidebar-section-label">MHN-Tools</p>
-    <a href="https://mitglieder.{getenv('DOMAINNAME')}">
-        <i class="ti ti-message-circle nav-icon" aria-hidden="true"></i> Mitgliederverzeichnis
-    </a>
-    <a href="https://wiki.{getenv('DOMAINNAME')}">
-        <i class="ti ti-book nav-icon" aria-hidden="true"></i> Wiki
-    </a>
-    <a href="https://www.{getenv('DOMAINNAME')}/veranstaltungen">
-        <i class="ti ti-calendar-event nav-icon" aria-hidden="true"></i> Veranstaltungen
-    </a>
-    <a href="https://mind-akademie.de/">
-        <i class="ti ti-school nav-icon" aria-hidden="true"></i> Mind-Akademie
-    </a>
+        {include nav-link, 'Mitgliederverzeichnis', 'https://mitglieder.' . getenv('DOMAINNAME'), 'users'}
+        {include nav-link, 'Wiki', 'https://wiki.' . getenv('DOMAINNAME'), 'book'}
+        {include nav-link, 'Veranstaltungen', 'https://www.' . getenv('DOMAINNAME') . '/veranstaltungen', 'calendar-event'}
+        {include nav-link, 'Mind-Akademie', 'https://mind-akademie.de/', 'school'}
 
         <p class="sidebar-section-label">MHN</p>
-    <a href="https://www.{getenv('DOMAINNAME')}">
-        <i class="ti ti-home nav-icon" aria-hidden="true"></i> MHN-Webseite
-    </a>
-    <a href="https://www.mind-hochschul-netzwerk.de/mod/book/view.php?id=253&amp;chapterid=4">
-        <i class="ti ti-file-text-shield nav-icon" aria-hidden="true"></i> Datenschutz
-    </a>
-    <a href="https://www.mind-hochschul-netzwerk.de/mod/book/view.php?id=253&amp;chapterid=5">
-        <i class="ti ti-file nav-icon" aria-hidden="true"></i> Impressum
-    </a>
+        {include nav-link, 'MHN-Webseite', 'https://www.' . getenv('DOMAINNAME'), 'home'}
+        {include nav-link, 'Datenschutz', 'https://www.mind-hochschul-netzwerk.de/mod/book/view.php?id=253&amp;chapterid=4', 'file-text-shield'}
+        {include nav-link, 'Impressum', 'https://www.mind-hochschul-netzwerk.de/mod/book/view.php?id=253&amp;chapterid=5', 'file'}
 
         <div class="sidebar-bottom">
             <p class="sidebar-section-label">Konto</p>
-    <a href="#" onclick="listigLogout(event)">
-        <i class="ti ti-logout nav-icon" aria-hidden="true"></i> Logout
-    </a>
+            {include nav-link, 'Logout', '#', 'logout', [onclick => "listigLogout(event)"]}
         </div>
     </nav>
 </div>
+
 <label class="overlay" for="nav-toggle" tabindex="-1"></label>
+{/define}
+
+{define #custom_after_header}
+
+
+
 
 <main class="main-content">
-<section class="page-header" aria-labelledby="title">
+    <section class="page-header" aria-labelledby="title">
         <div class="summary">
-            <span class="page-label"><i class="ti ti-mail" aria-hidden="true"></i> Mailinglisten</span>
-            <h1 id="title">Mailinglisten</h1>
-<div class="summary">
-Hier findest du alle Mailinglisten, die du abonniert hast. Die
-Verwaltung der Mailinglisten findest du unter dem Menüpunkt <a href="https://mitglieder.{getenv('DOMAINNAME')}/groups">Gruppen</a>.
-</div>
+            <span class="page-label"><i class="ti ti-mail" aria-hidden="true"></i> <a href="/">Mailinglisten</a></span>
+            {if empty($list)}
+                <h1 id="title">Meine Listen</h1>
+                <div class="summary">
+                Hier findest du alle Mailinglisten, die du abonniert hast. Die
+                Verwaltung der Mailinglisten findest du unter dem Menüpunkt <a href="https://mitglieder.{getenv('DOMAINNAME')}/groups">Gruppen</a>.
+                </div>
+            {else}
+                <h1 id="title">{$list->displayName}</h1>
+                <div class="summary">
+                    {$list->description}
+                </div>
+            {/if}
         </div>
     </section>
 
-<section class="panel">
+    <section class="panel" aria-labelledby="panel-heading">
+        <h2 id="panel-heading">{switch $this->pageName}
+            {case dashboard}<i class="ti ti-layout-dashboard" aria-hidden="true"></i> Übersicht
+            {case archive}<i class="ti ti-archive" aria-hidden="true"></i> Archiv
+            {case archive.show}<i class="ti ti-archive" aria-hidden="true"></i> Archiv
+            {case manage}<i class="ti ti-settings" aria-hidden="true"></i> Verwaltung
+            {default}<i class="ti ti-dashboard" aria-hidden="true"></i> Übersicht
+            {/switch}
+        </h2>
+
+
+
 
 {/define}
+
 
 {define #custom_body_end}
 </section>
