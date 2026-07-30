@@ -7,7 +7,7 @@ help:
 		awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-14s\033[0m %s\n", $$1, $$2}'
 
 prod: ## Recreate and start the app container
-	docker compose up -d --force-recreate --remove-orphans app
+	docker compose up -d --pull always --force-recreate --remove-orphans app
 
 logs: ## Tail logs from all containers
 	docker compose logs -f
