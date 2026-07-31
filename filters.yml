@@ -1,1 +1,5 @@
-- subject: penis
+- subject: spaaam
+- from: "MAILER-DAEMON@{domain}"
+  to: "{list-mail}"
+  body: Das ist ein Test
+  action: discard

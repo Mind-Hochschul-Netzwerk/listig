@@ -4,13 +4,15 @@
     archive.show: '/archive/show.latte',
     manage: '/list/manage.latte',
 ]}
-{var $this->pageName = $this->getReferringTemplate()->getReferringTemplate()->getName()}
+{var $pageName = $this->getReferringTemplate()->getReferringTemplate()->getName()}
 {foreach $pages as $name => $matcher}
     {if str_ends_with($this->getReferringTemplate()->getReferringTemplate()->getName(), $matcher)}
-        {var $this->pageName = $name}
+        {var $pageName = $name}
         {breakIf true}
     {/if}
 {/foreach}
+{* Workaround to supress warnings *}
+{var $tmp = @($this->pageName = $pageName)}
 
 {define #custom_head}
 <link rel="icon" href="https://mitglieder.{getenv("DOMAINNAME")}/favicon.png">
