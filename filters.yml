@@ -1,5 +1,8 @@
-- subject: spaaam
 - from: "MAILER-DAEMON@{domain}"
   to: "{list-mail}"
-  body: Das ist ein Test
+  body: "Vielen Dank für dein Interesse am Mind-Hochschul-Netzwerk."
+  action: discard
+
+- subject: spaaam
+- subject: /spa{5,}m/i
   action: discard
