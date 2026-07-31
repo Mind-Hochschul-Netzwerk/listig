@@ -1009,7 +1009,6 @@ table {
     transition: background 0.1s;
 
     &:last-child td { border-bottom: none; }
-    &:hover td { background: var(--accent-soft); }
     &.active td { color: var(--accent); font-weight: 600; }
     &.active td:first-child { color: var(--accent); }
   }
