@@ -43,6 +43,22 @@ services:
     networks:
       - default
 
+  adminer:
+    image: adminer
+    restart: unless-stopped
+    container_name: ${SERVICENAME}-adminer
+    environment:
+      ADMINER_DEFAULT_SERVER: db
+      ADMINER_DESIGN: pepa-linha
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=traefik
+      - traefik.http.routers.${SERVICENAME}-adminer.entrypoints=websecure
+      - traefik.http.routers.${SERVICENAME}-adminer.rule=Host(`${SERVICENAME}-adminer.${DOMAINNAME}`)
+    networks:
+      - traefik
+      - default
+
 networks:
   traefik:
     external: true

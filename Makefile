@@ -17,3 +17,6 @@ down: ## Stop and remove containers
 
 shell: ## Open a shell inside the app container
 	docker compose exec $(SERVICENAME) bash
+
+adminer: ## Start Adminer container
+	docker compose up -d --pull always --force-recreate --remove-orphans adminer
