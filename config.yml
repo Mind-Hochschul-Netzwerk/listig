@@ -10,6 +10,9 @@ use:
   - mail-config
   - list-defaults
   - openid-connect
+  - local-config
+
+local-config: !include config.local.yml
 
 database:
   db-name: db

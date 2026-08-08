@@ -7,6 +7,7 @@ services:
       - .env
     volumes:
       - ./config.yml:/app/config/config.yml:ro
+      - ./config.local.yml:/app/config/config.local.yml:ro
       - ./filters.yml:/app/config/filters.yml:ro
       - ./custom.latte:/app/config/custom.latte:ro
       - ./css:/app/public/css/:ro
