@@ -4,15 +4,15 @@
     archive.show: '/archive/show.latte',
     manage: '/list/manage.latte',
 ]}
-{var $pageName = $this->getReferringTemplate()->getReferringTemplate()->getName()}
+{var $pageName = getTemplate()->getReferringTemplate()->getReferringTemplate()->getName()}
 {foreach $pages as $name => $matcher}
-    {if str_ends_with($this->getReferringTemplate()->getReferringTemplate()->getName(), $matcher)}
+    {if str_ends_with($pageName, $matcher)}
         {var $pageName = $name}
         {breakIf true}
     {/if}
 {/foreach}
-{* Workaround to supress warnings *}
-{var $tmp = @($this->pageName = $pageName)}
+{* Workaround to persist value *}
+{var $_ENV['_pageName']= $pageName}
 
 {define #custom_head}
 <link rel="icon" href="https://mitglieder.{getenv("DOMAINNAME")}/favicon.png">
@@ -108,7 +108,7 @@ nav a {
     </section>
 
     <section class="panel" aria-labelledby="panel-heading">
-        <h2 id="panel-heading">{switch $this->pageName}
+        <h2 id="panel-heading">{switch $_ENV['_pageName']}
             {case dashboard}<i class="ti ti-layout-dashboard" aria-hidden="true"></i> Übersicht
             {case archive}<i class="ti ti-archive" aria-hidden="true"></i> Archiv
             {case archive.show}<i class="ti ti-archive" aria-hidden="true"></i> Archiv
