@@ -1,19 +1,3 @@
-{var $pages = [
-    dashboard: '/dashboard.latte',
-    archive: '/archive/index.latte',
-    archive.show: '/archive/show.latte',
-    manage: '/list/manage.latte',
-]}
-{var $pageName = getTemplate()->getReferringTemplate()->getReferringTemplate()->getName()}
-{foreach $pages as $name => $matcher}
-    {if str_ends_with($pageName, $matcher)}
-        {var $pageName = $name}
-        {breakIf true}
-    {/if}
-{/foreach}
-{* Workaround to persist value *}
-{var $_ENV['_pageName']= $pageName}
-
 {define #custom_head}
 <link rel="icon" href="https://mitglieder.{getenv("DOMAINNAME")}/favicon.png">
 <link rel="stylesheet" href="/css/style.css">
@@ -37,9 +21,7 @@ nav a {
 {/define}
 
 {define nav-link, $label, $href, $icon, $attributes}
-    <a href="{$href}" n:attr="$attributes">
-        <i class="ti ti-{$icon} nav-icon" aria-hidden="true"></i> {$label}
-    </a>
+    <a href="{$href}" n:attr="$attributes"><i class="ti ti-{$icon} nav-icon" aria-hidden="true"></i> {$label}</a>
 {/define}
 
 {define #custom_header}
@@ -62,12 +44,17 @@ nav a {
 
 <div class="sidebar" id="site-navigation" aria-label="Seitennavigation">
     <nav>
+        <p class="sidebar-section-label">Mitgliederverzeichnis</p>
+        {var $mitgliederUrl = 'https://mitglieder.' . getenv('DOMAINNAME')}
+        {include nav-link, 'Mitgliedersuche', $mitgliederUrl, 'user-search', suche}
+        {include nav-link, 'Meine Daten', $mitgliederUrl . '/user/self/edit', 'user', bearbeiten}
+        {include nav-link, 'Einwilligungen', $mitgliederUrl . '/user/self/agreements', 'shield-check', einwilligungen}
+
         <p class="sidebar-section-label">Mailinglisten</p>
         {include nav-link, 'Meine Listen', '/', 'mail', ['class' => 'active']}
-        {include nav-link, 'Gruppen', 'https://mitglieder.' . getenv('DOMAINNAME') . '/groups', 'users-group'}
+        {include nav-link, 'Gruppen', $mitgliederUrl . '/groups', 'users-group'}
 
         <p class="sidebar-section-label">MHN-Tools</p>
-        {include nav-link, 'Mitgliederverzeichnis', 'https://mitglieder.' . getenv('DOMAINNAME'), 'users'}
         {include nav-link, 'Wiki', 'https://wiki.' . getenv('DOMAINNAME'), 'book'}
         {include nav-link, 'Veranstaltungen', 'https://www.' . getenv('DOMAINNAME') . '/veranstaltungen', 'calendar-event'}
         {include nav-link, 'Mind-Akademie', 'https://mind-akademie.de/', 'school'}
@@ -108,11 +95,11 @@ nav a {
     </section>
 
     <section class="panel" aria-labelledby="panel-heading">
-        <h2 id="panel-heading">{switch $_ENV['_pageName']}
-            {case dashboard}<i class="ti ti-layout-dashboard" aria-hidden="true"></i> Übersicht
-            {case archive}<i class="ti ti-archive" aria-hidden="true"></i> Archiv
-            {case archive.show}<i class="ti ti-archive" aria-hidden="true"></i> Archiv
-            {case manage}<i class="ti ti-settings" aria-hidden="true"></i> Verwaltung
+        <h2 id="panel-heading">{switch getTemplateName()}
+            {case "dashboard.latte"}<i class="ti ti-layout-dashboard" aria-hidden="true"></i> Übersicht
+            {case "archive/index.latte"}<i class="ti ti-archive" aria-hidden="true"></i> Archiv
+            {case "archive/show.latte"}<i class="ti ti-archive" aria-hidden="true"></i> Archiv
+            {case "list/manage.latte"}<i class="ti ti-settings" aria-hidden="true"></i> Verwaltung
             {default}<i class="ti ti-layout-dashboard" aria-hidden="true"></i> Übersicht
             {/switch}
         </h2>
@@ -120,7 +107,6 @@ nav a {
 
 {define #custom_body_end}
     </section>
-
     <p class="attribution"><a href="https://github.com/hengeb/listig">powered by Listig</a></p>
 </main>
 {/define}
