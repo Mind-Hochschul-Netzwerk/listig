@@ -2,8 +2,9 @@ language: de
 domain: "$DOMAINNAME"
 hostname: "lists.{domain}"
 
-sleep-seconds: 20
+sleep-seconds: 5
 log-level: "$LOG_LEVEL"
+bounce-action: mark-invalid
 
 use:
   - database
