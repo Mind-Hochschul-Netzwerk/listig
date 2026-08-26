@@ -4,6 +4,7 @@ hostname: "lists.{domain}"
 
 sleep-seconds: 5
 log-level: "$LOG_LEVEL"
+filters-default-action: discard
 bounce-action: mark-invalid
 
 use:
