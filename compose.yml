@@ -14,7 +14,6 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=traefik
-      - traefik.http.routers.${SERVICENAME}.entrypoints=websecure
       - traefik.http.routers.${SERVICENAME}.rule=Host(`lists.${DOMAINNAME}`)
     depends_on:
       db:
@@ -54,11 +53,26 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=traefik
-      - traefik.http.routers.${SERVICENAME}-adminer.entrypoints=websecure
       - traefik.http.routers.${SERVICENAME}-adminer.rule=Host(`${SERVICENAME}-adminer.${DOMAINNAME}`)
     networks:
       - traefik
       - default
+
+  editor:
+    image: ghcr.io/hengeb/editor:latest
+    restart: unless-stopped
+    container_name: ${SERVICENAME}-editor
+    volumes:
+      - ./config.local.yml:/files/config.local.yml
+      - ./filters.yml:/files/filters.yml
+    environment:
+      - AUTH_ALLOWED_GROUP=rechte
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.${SERVICENAME}-editor.rule=Host(`${SERVICENAME}-editor.${DOMAINNAME}`)
+      - traefik.http.routers.${SERVICENAME}-editor.middlewares=forwardauth@file
+    networks:
+      - traefik
 
 networks:
   traefik:
