@@ -20,6 +20,17 @@ nav a {
     margin: 0 0 1.5rem;
 }
 .panel .card:last-child { margin-bottom: 0; }
+/* The dashboard brings one section per kind of list (subscribed / can join / others): each its own panel. */
+.dashboard-section {
+    padding: 1.5rem;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-panel);
+    box-shadow: var(--shadow);
+}
+.dashboard-section + .dashboard-section { margin-top: 1.5rem; }
+.dashboard-section h2 { margin: 0 0 1rem; font-size: 1.1rem; }
+.dashboard-section p { margin-top: 0; color: var(--muted); }
 .page-header .page-actions { margin-top: .25rem; }
 .page-header .list-actions { margin: 0; }
 </style>
@@ -107,9 +118,12 @@ nav a {
 <main class="main-content" id="main-content">
     {$pageHeader}
 
+    {if getTemplateName() === 'dashboard.latte'}
+        {* the dashboard already consists of panels (.dashboard-section) *}
+        {$content}
+    {else}
     <section class="panel" aria-labelledby="panel-heading">
         <h2 id="panel-heading">{switch getTemplateName()}
-            {case "dashboard.latte"}<i class="ti ti-layout-dashboard" aria-hidden="true"></i> Übersicht
             {case "list/index.latte"}<i class="ti ti-info-circle" aria-hidden="true"></i> Info
             {case "list/manage.latte"}<i class="ti ti-settings" aria-hidden="true"></i> Verwaltung
             {case "archive/index.latte"}<i class="ti ti-archive" aria-hidden="true"></i> Archiv
@@ -120,6 +134,7 @@ nav a {
         </h2>
         {$content}
     </section>
+    {/if}
 
     <p class="attribution"><a href="https://github.com/hengeb/listig">powered by Listig</a></p>
 </main>
