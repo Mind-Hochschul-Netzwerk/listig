@@ -42,7 +42,12 @@ list-defaults:
   list-label: "[{display-name}]"
   reply-to: list
   allow-leave: direct
-  footer: "-- \n<p>Diese Mail wurde über die MHN-Liste {display-name} verschickt.</p><p>Falls du keine Mails über diese Liste mehr bekommen möchtest, kannst du sie hier abbestellen: <a href=\"{list-url}\">Zur Liste</a></p>"
+  archive-block: "<p><a href=\"{list-url}/archive\">Zum Archiv der Liste</a></p>"
+  footer: "-- \n\
+    <p>Diese Mail wurde über die MHN-Liste {display-name} verschickt.</p>\
+    <p>Falls du keine Mails über diese Liste mehr bekommen möchtest, \
+    kannst du sie hier abbestellen: <a href=\"{list-url}\">Zur Liste</a></p>\
+    {archive|match:members=>{archive-block},public=>{archive-block}}"
   archive: members
   smtp-from-name: "{sender-name} (via MHN)"
 
