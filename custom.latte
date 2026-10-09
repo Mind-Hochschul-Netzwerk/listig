@@ -1,6 +1,6 @@
 {define #custom_head}
 <link rel="icon" href="https://mitglieder.{getenv("DOMAINNAME")}/favicon.png">
-<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="https://mitglieder.{getenv("DOMAINNAME")}/css/style.css">
 <link rel="stylesheet" href="https://mitglieder.{getenv("DOMAINNAME")}/css/tabler-icons.min.css"/>
 <style>
 nav a {
@@ -97,9 +97,9 @@ nav a {
             <h1 id="title">{if trim((string) $title) !== ''}{$title}{else}Mailinglisten{/if}</h1>
             {if getTemplateName() === 'dashboard.latte'}
                 <div class="summary">
-                    Hier findest du die Mailinglisten, die du abonniert hast, und &ndash; falls vorhanden &ndash;
-                    weitere Listen, denen du beitreten kannst. Die Verwaltung der Mailinglisten findest du unter
-                    dem Men&uuml;punkt <a href="https://mitglieder.{getenv('DOMAINNAME')}/groups">Gruppen</a>.
+                    Hier findest du die Mailinglisten, die du abonniert hast, und Listen, denen du beitreten kannst.
+                    Die Verwaltung der Mailinglisten findest du unter
+                    dem Menüpunkt <a href="https://mitglieder.{getenv('DOMAINNAME')}/groups">Gruppen</a>.
                 </div>
             {/if}
         {else}
@@ -107,9 +107,12 @@ nav a {
             <div class="summary">
                 {$list->description}
             </div>
+            <div class="meta">
+                <span><i class="ti ti-mail" aria-hidden="true"></i> <a href="mailto:{$list->mail}">{$list->mail}</a></span>
+            </div>
         {/if}
     </div>
-    <div class="page-actions" n:if="trim((string) $actions) !== ''">{$actions}</div>
+    <div class="action-links" n:if="trim((string) $actions) !== ''">{$actions}</div>
 </section>
 {/define}
 
@@ -123,15 +126,12 @@ nav a {
         {$content}
     {else}
     <section class="panel" aria-labelledby="panel-heading">
-        <h2 id="panel-heading">{switch getTemplateName()}
+        <h2 id="panel-heading" n:ifcontent>{switch getTemplateName()}
             {case "list/index.latte"}<i class="ti ti-info-circle" aria-hidden="true"></i> Info
             {case "list/manage.latte"}<i class="ti ti-settings" aria-hidden="true"></i> Verwaltung
             {case "archive/index.latte"}<i class="ti ti-archive" aria-hidden="true"></i> Archiv
-            {case "archive/show.latte"}<i class="ti ti-archive" aria-hidden="true"></i> Archiv
             {case "compose.latte"}<i class="ti ti-send" aria-hidden="true"></i> Mail an externe Adresse
-            {default}<i class="ti ti-layout-dashboard" aria-hidden="true"></i> Übersicht
-            {/switch}
-        </h2>
+        {/switch}</h2>
         {$content}
     </section>
     {/if}
