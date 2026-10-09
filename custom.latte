@@ -10,13 +10,18 @@ nav a {
 #archive-table :is(button, .button, input[type="submit"], input[type="button"]):hover {
     background: inherit;
 }
-.panel main, .panel .container {
-    margin: 0;
+/* Listig's built-in cards inside our panel: no second panel look. */
+.panel .card {
+    background: none;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
     padding: 0;
+    margin: 0 0 1.5rem;
 }
-.container { width: auto; max-width: none;}
-.container h1 { display: none; }
-.page-header + .panel .attribution { display: none; }
+.panel .card:last-child { margin-bottom: 0; }
+.page-header .page-actions { margin-top: .25rem; }
+.page-header .list-actions { margin: 0; }
 </style>
 {/define}
 
@@ -49,10 +54,7 @@ nav a {
         {include nav-link, 'Mitgliedersuche', $mitgliederUrl, 'user-search', suche}
         {include nav-link, 'Meine Daten', $mitgliederUrl . '/user/self/edit', 'user', bearbeiten}
         {include nav-link, 'Einwilligungen', $mitgliederUrl . '/user/self/agreements', 'shield-check', einwilligungen}
-        {include nav-link, 'Gruppen', $mitgliederUrl . '/groups', 'users-group'}
-
-        <p class="sidebar-section-label">Mailinglisten</p>
-        {include nav-link, 'Meine Listen', '/', 'mail', ['class' => 'active']}
+        {include nav-link, 'Gruppen', $mitgliederUrl . '/groups', 'users-group', ['class' => 'active']}
 
         <p class="sidebar-section-label">MHN-Tools</p>
         {include nav-link, 'Wiki', 'https://wiki.' . getenv('DOMAINNAME'), 'book'}
@@ -74,39 +76,54 @@ nav a {
 <label class="overlay" for="nav-toggle" tabindex="-1"></label>
 {/define}
 
-{define #custom_after_header}
-<main class="main-content">
-    <section class="page-header" aria-labelledby="title">
-        <div class="summary">
-            <span class="page-label"><i class="ti ti-mail" aria-hidden="true"></i> <a href="/">Mailinglisten</a></span>
-            {if empty($list)}
-                <h1 id="title">Meine Listen</h1>
+{* Heading area: title, description and the list's action buttons (Listig passes them as
+   $title, $description, $actions; $list is set on every list page). *}
+{define #custom_page_header}
+<section class="page-header" aria-labelledby="title">
+    <div class="summary">
+        <span class="page-label"><i class="ti ti-mail" aria-hidden="true"></i> <a href="/">Mailinglisten</a></span>
+        {if empty($list)}
+            <h1 id="title">{if trim((string) $title) !== ''}{$title}{else}Mailinglisten{/if}</h1>
+            {if getTemplateName() === 'dashboard.latte'}
                 <div class="summary">
-                Hier findest du alle Mailinglisten, die du abonniert hast. Die
-                Verwaltung der Mailinglisten findest du unter dem Menüpunkt <a href="https://mitglieder.{getenv('DOMAINNAME')}/groups">Gruppen</a>.
-                </div>
-            {else}
-                <h1 id="title">{$list->displayName}</h1>
-                <div class="summary">
-                    {$list->description}
+                    Hier findest du die Mailinglisten, die du abonniert hast, und &ndash; falls vorhanden &ndash;
+                    weitere Listen, denen du beitreten kannst. Die Verwaltung der Mailinglisten findest du unter
+                    dem Men&uuml;punkt <a href="https://mitglieder.{getenv('DOMAINNAME')}/groups">Gruppen</a>.
                 </div>
             {/if}
-        </div>
-    </section>
+        {else}
+            <h1 id="title">{$list->displayName}</h1>
+            <div class="summary">
+                {$list->description}
+            </div>
+        {/if}
+    </div>
+    <div class="page-actions" n:if="trim((string) $actions) !== ''">{$actions}</div>
+</section>
+{/define}
+
+{* The whole page frame in one block: no tags opened here and closed elsewhere. *}
+{define #custom_main}
+<main class="main-content" id="main-content">
+    {$pageHeader}
 
     <section class="panel" aria-labelledby="panel-heading">
         <h2 id="panel-heading">{switch getTemplateName()}
             {case "dashboard.latte"}<i class="ti ti-layout-dashboard" aria-hidden="true"></i> Übersicht
+            {case "list/index.latte"}<i class="ti ti-info-circle" aria-hidden="true"></i> Info
+            {case "list/manage.latte"}<i class="ti ti-settings" aria-hidden="true"></i> Verwaltung
             {case "archive/index.latte"}<i class="ti ti-archive" aria-hidden="true"></i> Archiv
             {case "archive/show.latte"}<i class="ti ti-archive" aria-hidden="true"></i> Archiv
-            {case "list/manage.latte"}<i class="ti ti-settings" aria-hidden="true"></i> Verwaltung
+            {case "compose.latte"}<i class="ti ti-send" aria-hidden="true"></i> Mail an externe Adresse
             {default}<i class="ti ti-layout-dashboard" aria-hidden="true"></i> Übersicht
             {/switch}
         </h2>
-{/define}
-
-{define #custom_body_end}
+        {$content}
     </section>
+
     <p class="attribution"><a href="https://github.com/hengeb/listig">powered by Listig</a></p>
 </main>
 {/define}
+
+{* Our own attribution sits inside custom_main (below the panel) — suppress the built-in one. *}
+{define #custom_attribution}{/define}
