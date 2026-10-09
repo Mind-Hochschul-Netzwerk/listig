@@ -31,8 +31,10 @@ nav a {
 .dashboard-section + .dashboard-section { margin-top: 1.5rem; }
 .dashboard-section h2 { margin: 0 0 1rem; font-size: 1.1rem; }
 .dashboard-section p { margin-top: 0; color: var(--muted); }
-.page-header .page-actions { margin-top: .25rem; }
-.page-header .list-actions { margin: 0; }
+/* Listig wraps its buttons in <nav class="list-actions">: in the page header dissolve that box, so the
+   buttons are direct flex items of our .action-links and follow its look and wrapping rules. (The dashboard
+   entries keep Listig's own row, which wraps the same way.) */
+.action-links > .list-actions { display: contents; }
 </style>
 {/define}
 
