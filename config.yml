@@ -27,6 +27,7 @@ mail-config:
   smtp-port: 465
   mail-user: "{list-mail|default:$MAIL_USER}"
   mail-password: "{mail-user|match:$MAIL_USER=>$MAIL_PASSWORD}"
+  trusted-authserv-id: "{mail-host}"
 
 ldap-config:
   ldap-host: ldap://ldap:389/
