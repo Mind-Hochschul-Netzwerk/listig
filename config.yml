@@ -53,6 +53,7 @@ list-defaults:
     {archive-block}"
   archive: members
   smtp-from-name: "{sender-name} (via MHN)"
+  from-address: masked
 
 openid-connect:
   oidc-provider-url: http://authelia:9091
