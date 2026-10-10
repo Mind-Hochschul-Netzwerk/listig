@@ -31,9 +31,10 @@ mail-config:
 ldap-config:
   ldap-host: ldap://ldap:389/
   ldap-base-dn: dc=mind-hochschul-netzwerk,dc=de
-  ldap-bind-dn: cn=admin,dc=mind-hochschul-netzwerk,dc=de
+  ldap-bind-dn: "cn=admin,{ldap-base-dn}"
   ldap-bind-password: "$LDAP_BIND_PASSWORD"
-  ldap-list-dn: ou=groups,dc=mind-hochschul-netzwerk,dc=de
+  ldap-list-dn: "ou=groups,{ldap-base-dn}"
+  ldap-empty-group-member: "{ldap-bind-dn}"
   firstname: "{givenName}"
   lastname: "{sn}"
 
