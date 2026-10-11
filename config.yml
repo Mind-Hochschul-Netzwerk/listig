@@ -54,6 +54,7 @@ list-defaults:
   archive: members
   smtp-from-name: "{sender-name} (via MHN)"
   from-address: masked
+  post-access-unauthenticated: moderate
 
 openid-connect:
   oidc-provider-url: http://authelia:9091
