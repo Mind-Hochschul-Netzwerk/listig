@@ -44,7 +44,7 @@ list-defaults:
   list-label: "[{display-name}]"
   group-url: "https://mitglieder.{domain}/groups/{list-name}"
   reply-to: list
-  allow-leave: direct
+  leave-policy: direct
   has-archive: "{archive|match:members=>true,public=>true,authenticated=>true}"
   archive-block: "{has-archive|match:true=><p><a href=\"{list-url}/archive\">Zum Archiv der Liste</a></p>}"
   footer: "-- \n\
