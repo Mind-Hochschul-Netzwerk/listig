@@ -42,6 +42,7 @@ ldap-config:
 list-defaults:
   list-mail: "{list-name}@{domain}"
   list-label: "[{display-name}]"
+  group-url: "https://mitglieder.{domain}/groups/{list-name}"
   reply-to: list
   allow-leave: direct
   has-archive: "{archive|match:members=>true,public=>true,authenticated=>true}"
@@ -49,10 +50,10 @@ list-defaults:
   footer: "-- \n\
     <p>Diese Mail wurde über die MHN-Liste {display-name} verschickt.</p>\
     <p>Falls du keine Mails über diese Liste mehr bekommen möchtest, \
-    kannst du sie hier abbestellen: <a href=\"{list-url}\">Zur Liste</a></p>\
+    kannst du sie hier abbestellen: <a href=\"{group-url}\">Zur Liste</a></p>\
     {archive-block}"
   archive: members
-  smtp-from-name: "{sender-name} (via MHN)"
+  from-name: "{sender-name} (via MHN)"
   from-address: masked
   post-access-unauthenticated: moderate
 
