@@ -52,10 +52,12 @@ list-defaults:
     <p>Falls du keine Mails über diese Liste mehr bekommen möchtest, \
     kannst du sie hier abbestellen: <a href=\"{group-url}\">Zur Liste</a></p>\
     {archive-block}"
-  archive: members
+  archive: off
+  archive-max-age: 12 months
   from-name: "{sender-name} (via MHN)"
   from-address: masked
   post-access-unauthenticated: moderate
+  visibility: authenticated
 
 openid-connect:
   oidc-provider-url: http://authelia:9091
